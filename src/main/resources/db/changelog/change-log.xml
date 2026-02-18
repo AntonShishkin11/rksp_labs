@@ -2,23 +2,40 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet runAlways="true" author="shishkin" id="script1" dbms="postgresql">
+    <changeSet author="shishkin" id="script1" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="HALT">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = 'utmn'
+            </sqlCheck>
+        </preConditions>
+
         <sqlFile dbms="postgresql"
                  path="scripts/script1.sql"
                  encoding="UTF-8"
                  endDelimiter="/"
                  relativeToChangelogFile="true"
                  splitStatements="true"
-                 stripComments="true"
-        />
-        <comment>Создание первой таблицы</comment>
+                 stripComments="true"/>
+        <comment>Создание схемы utmn и таблицы student</comment>
     </changeSet>
 
-    <changeSet id="script2" author="shishkin" runAlways="true">
-        <sqlFile path="db/changelog/scripts/script2.sql"
-                 relativeToChangelogFile="false"/>
+    <changeSet id="script2" author="shishkin" runAlways="true" dbms="postgresql">
+        <preConditions onFail="HALT" onError="HALT">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*)
+                FROM information_schema.tables
+                WHERE table_schema = 'utmn' AND table_name = 'student'
+            </sqlCheck>
+        </preConditions>
+
+        <sqlFile path="scripts/script2.sql"
+                 encoding="UTF-8"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"/>
+        <comment>Заполнение таблицы student начальными данными</comment>
     </changeSet>
 
 </databaseChangeLog>
