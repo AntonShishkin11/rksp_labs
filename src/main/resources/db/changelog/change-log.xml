@@ -16,4 +16,9 @@
         <comment>Создание первой таблицы</comment>
     </changeSet>
 
+    <changeSet id="script2" author="shishkin" runAlways="true">
+        <sqlFile path="db/changelog/scripts/script2.sql"
+                 relativeToChangelogFile="false"/>
+    </changeSet>
+
 </databaseChangeLog>
